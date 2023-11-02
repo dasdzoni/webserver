@@ -1,0 +1,12 @@
+- name: set hostname
+  ansible.builtin.hostname:
+    name: "lamp-stack.local"
+  become: true
+
+- name: edit /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: 127.0.0.1 localhost.localdomain localhost
+  become: true
+
+- include_tasks: packages.yml
