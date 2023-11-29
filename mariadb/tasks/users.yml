@@ -1,0 +1,9 @@
+- name: add database user 'developer@localhost'
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{  mariadb_root_password  }}"
+    name: developer
+    password: "{{  mariadb_developer_password  }}"
+    host: "localhost"
+    priv: 'development.*:ALL'
+    state: present

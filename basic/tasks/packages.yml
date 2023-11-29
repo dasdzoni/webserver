@@ -1,5 +1,4 @@
 - name: install packages
-  become: true
   ansible.builtin.apt:
     update_cache: yes
     name:
@@ -11,10 +10,6 @@
       - curl
       - wget
       - gnupg
-
-- name: symlink vi
-  become: true
-  ansible.builtin.file:
-    src: /usr/bin/vim
-    dest: /usr/bin/vi
-    state: link
+      - powerline
+      - fonts-powerline
+      - tree
