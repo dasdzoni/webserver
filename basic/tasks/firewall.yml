@@ -1,0 +1,31 @@
+- name: Start and enable UFW
+  community.general.ufw:
+    state: enabled
+
+- name: Set logging
+  community.general.ufw:
+    logging: 'on'
+
+- name: allow openssh
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: allow mariadb
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    port: 3306
+
+- name: delete http rule
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    port: 80
+    delete: true
+
+- name: allow https
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    port: 443

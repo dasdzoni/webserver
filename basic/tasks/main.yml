@@ -11,6 +11,8 @@
 
 - include_tasks: packages.yml 
 
+- include_tasks: firewall.yml
+
 - name: Add custom .bashrc to skel
   ansible.builtin.copy:
     src: .bashrc
