@@ -24,3 +24,5 @@
     group: root
     state: link
   loop: "{{  websites  }}"
+  notify: 
+    - restart apache
