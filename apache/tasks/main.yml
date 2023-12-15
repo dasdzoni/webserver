@@ -11,6 +11,17 @@
     state: started
     enabled: yes
 
+- name: Copy apache config file
+  ansible.builtin.template:
+    src: templates/apache2.conf
+    dest: /etc/apache2/apache2.conf
+    owner: www-data
+    group: www-data
+    mode: u=rw,g=r
+    backup: yes
+  notify: 
+    - restart apache
+
 - name: Copy SSL certificate files
   ansible.builtin.copy:
     src: files/ssl
@@ -22,9 +33,13 @@
   tags:
     - parentdir
 
-- name: Enable SSL engine module
+- name: Enable modules
   community.general.apache2_module:
-    name: ssl
+    name: "{{  item.module  }}"
     state: present
+  loop:
+    - module: ssl
+    - module: headers
+    - module: rewrite
 
 - include_tasks: copy-sites.yml

@@ -15,6 +15,8 @@
     group: root
     mode: 0644
   loop: "{{  websites  }}"
+  notify: 
+    - restart apache
 
 - name: enable new site
   ansible.builtin.file:
