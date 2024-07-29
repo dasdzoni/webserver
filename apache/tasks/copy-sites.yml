@@ -1,0 +1,30 @@
+- name: copy example web page
+  ansible.builtin.copy:
+    src: "files/{{  item  }}"
+    dest: /var/www/html/
+    owner: www-data
+    group: www-data
+    mode: 0755
+  loop: "{{  websites  }}"
+
+- name: copy virtual host config file
+  ansible.builtin.copy:
+    src: "files/{{  item  }}.conf"
+    dest: /etc/apache2/sites-available/
+    owner: root
+    group: root
+    mode: 0644
+  loop: "{{  websites  }}"
+  notify: 
+    - restart apache
+
+- name: enable new site
+  ansible.builtin.file:
+    src: "/etc/apache2/sites-available/{{ item  }}.conf"
+    dest: "/etc/apache2/sites-enabled/{{ item  }}.conf"
+    owner: root
+    group: root
+    state: link
+  loop: "{{  websites  }}"
+  notify: 
+    - restart apache

@@ -1,0 +1,45 @@
+- name: set hostname
+  ansible.builtin.hostname:
+    name: "lamp-stack.local"
+  become: true
+
+- name: edit /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: 127.0.0.1 localhost.localdomain localhost
+  become: true
+
+- include_tasks: packages.yml 
+
+- include_tasks: firewall.yml
+
+- name: Add custom .bashrc to skel
+  ansible.builtin.copy:
+    src: .bashrc
+    dest: /etc/skel/
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+
+- name: Modify useradd to use bash as default shell
+  lineinfile:
+    path: /etc/default/useradd
+    regexp: '^(.*)SHELL=/bin/sh(.*)$'
+    line: 'SHELL=/bin/bash'
+    backrefs: yes
+
+- name: Searching history with ctrl+up and ctrl+down
+  ansible.builtin.copy:
+    src: inputrc
+    dest: /etc/inputrc
+    owner: root
+    group: root
+    mode: '644'
+    backup: yes
+
+- name: symlink vi 
+  ansible.builtin.file:
+    src: /usr/bin/vim
+    dest: /usr/bin/vi
+    state: link

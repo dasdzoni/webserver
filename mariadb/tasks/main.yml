@@ -1,0 +1,60 @@
+- name: Check if mariadb is initialized
+  stat: path=/root/mariadb_initialized_true
+  ignore_errors: true
+  register: mariadb_initialized_true
+
+- name: install mariadb
+  apt:
+    update_cache: yes
+    name:
+      - mariadb-server
+      - python3-pymysql
+    state: present
+
+- name: initialize mariadb
+  command: "mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql"
+  when: mariadb_initialized_true.stat.exists == false
+
+- name: start and enable mariadb
+  ansible.builtin.systemd:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: set root user password
+  community.mysql.mysql_user:
+    login_user: root
+    login_unix_socket: "/run/mysqld/mysqld.sock"
+    name: root
+    password: "{{  mariadb_root_password  }}"
+    host_all: yes
+    state: present
+  when: mariadb_initialized_true.stat.exists == false
+
+- name: removes anonymous user account
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{  mariadb_root_password  }}"
+    name: ""
+    host_all: yes
+    state: absent
+    login_unix_socket: "/run/mysqld/mysqld.sock"
+  when: mariadb_initialized_true.stat.exists == false
+
+- name: set up database
+  include_tasks: database.yml
+
+- name: set up users
+  include_tasks: users.yml
+
+- name: create mariadb_initialized_true
+  ansible.builtin.file:
+    path: /root/mariadb_initialized_true
+    state: touch
+  when: mariadb_initialized_true.stat.exists == false
+
+- name: set immutable attribute
+  ansible.builtin.file:
+    path: /root/mariadb_initialized_true
+    attributes: i
+  when: mariadb_initialized_true.stat.exists == false

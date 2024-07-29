@@ -1,0 +1,7 @@
+- hosts: main
+  become: true
+  roles:
+    # - basic
+    # - mariadb
+     - apache
+    # - php

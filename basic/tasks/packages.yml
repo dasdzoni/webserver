@@ -1,0 +1,15 @@
+- name: install packages
+  ansible.builtin.apt:
+    update_cache: yes
+    name:
+      - git
+      - htop
+      - iotop
+      - man-db
+      - manpages
+      - curl
+      - wget
+      - gnupg
+      - powerline
+      - fonts-powerline
+      - tree

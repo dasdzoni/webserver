@@ -1,0 +1,17 @@
+- name: copy DDL
+  ansible.builtin.copy:
+    src: files/development.sql
+    dest: /tmp/development.sql
+    owner: root
+    group: root
+    mode: '644'
+
+- name: create database
+  community.mysql.mysql_db:
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name:
+      - development
+    state: import
+    target: /tmp/development.sql
